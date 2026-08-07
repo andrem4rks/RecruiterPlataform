@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: recruiter-plataform-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recruiter_platform}
+    username: ${DB_USERNAME:recruiter}
+    password: ${DB_PASSWORD:recruiter}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
