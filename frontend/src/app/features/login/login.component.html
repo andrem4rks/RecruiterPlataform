@@ -1,0 +1,54 @@
+<main class="auth-page">
+  <section class="intro" aria-labelledby="login-title">
+    <a class="brand" routerLink="/">Empresa X</a>
+    <p class="eyebrow">Portal de oportunidades internas</p>
+    <h1 id="login-title">Sua próxima oportunidade pode estar aqui.</h1>
+    <p class="description">
+      Entre para conhecer vagas, acompanhar candidaturas ou gerenciar processos seletivos.
+    </p>
+  </section>
+
+  <section class="card" aria-label="Acesso à plataforma">
+    <div>
+      <p class="eyebrow">Bem-vindo de volta</p>
+      <h2>Entrar</h2>
+      <p class="muted">Use seu e-mail corporativo.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
+      <label for="email">E-mail corporativo</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        placeholder="voce@empresa.com"
+      >
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <p class="field-error">Informe um e-mail válido.</p>
+      }
+
+      <label for="senha">Senha</label>
+      <input
+        id="senha"
+        type="password"
+        formControlName="senha"
+        autocomplete="current-password"
+        placeholder="Sua senha"
+      >
+      @if (form.controls.senha.touched && form.controls.senha.invalid) {
+        <p class="field-error">Informe sua senha.</p>
+      }
+
+      @if (erro()) {
+        <div class="alert" role="alert">{{ erro() }}</div>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Entrando…' : 'Entrar' }}
+      </button>
+    </form>
+
+    <p class="switch">Ainda não possui conta? <a routerLink="/cadastro">Criar conta</a></p>
+  </section>
+</main>
