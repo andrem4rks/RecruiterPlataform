@@ -12,3 +12,16 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+
+app:
+  web:
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+  security:
+    registration:
+      allowed-email-domain: ${CORPORATE_EMAIL_DOMAIN:empresa.com}
+    jwt:
+      # Valor previsível apenas para desenvolvimento local; sobrescreva JWT_SECRET fora desse ambiente.
+      secret: ${JWT_SECRET:local-development-only-secret-key-32-bytes-minimum}
+      expiration: ${JWT_EXPIRATION:15m}
+      issuer: recruiter-platform-api

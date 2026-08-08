@@ -1,0 +1,26 @@
+.topbar {
+  width: min(960px, calc(100% - 2rem));
+  margin: auto;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+button {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #cfd5e1;
+  border-radius: 9px;
+  background: #fff;
+  cursor: pointer;
+}
+
+main {
+  width: min(960px, calc(100% - 2rem));
+  margin: auto;
+  padding: 5rem 0;
+}
+
+h1 {
+  margin: 0.5rem 0 1rem;
+}

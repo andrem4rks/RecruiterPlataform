@@ -2,14 +2,12 @@ package com.marks.backend;
 
 import com.marks.competencia.model.Competencia;
 import com.marks.competencia.model.NivelCompetencia;
-import com.marks.organizacao.model.Organizacao;
 import com.marks.usuario.model.PerfilUsuario;
 import com.marks.usuario.model.Usuario;
 import com.marks.usuario.model.UsuarioCompetencia;
 import com.marks.vaga.model.Vaga;
 import com.marks.vaga.model.VagaCompetencia;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +17,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -32,10 +29,8 @@ class CompetenciasPersistenceTests {
     void devePersistirCompetenciasDeUsuarioEVaga() {
         Competencia java = new Competencia("Java", "Desenvolvimento na plataforma Java");
         Competencia postgresql = new Competencia("PostgreSQL", "Banco de dados relacional");
-        Organizacao organizacao = new Organizacao("Empresa Competências");
         entityManager.persist(java);
         entityManager.persist(postgresql);
-        entityManager.persist(organizacao);
 
         Usuario responsavel = new Usuario(
                 "Responsável",
@@ -43,7 +38,6 @@ class CompetenciasPersistenceTests {
                 "senha-hash",
                 PerfilUsuario.RESPONSAVEL,
                 LocalDate.of(2018, 1, 10),
-                organizacao,
                 List.of(new UsuarioCompetencia(java, NivelCompetencia.AVANCADO, 72))
         );
         Usuario candidato = new Usuario(
@@ -52,7 +46,6 @@ class CompetenciasPersistenceTests {
                 "senha-hash",
                 PerfilUsuario.CANDIDATO,
                 LocalDate.of(2021, 3, 15),
-                organizacao,
                 List.of(
                         new UsuarioCompetencia(java, NivelCompetencia.INTERMEDIARIO, 36),
                         new UsuarioCompetencia(postgresql, NivelCompetencia.BASICO, 12)
@@ -100,49 +93,24 @@ class CompetenciasPersistenceTests {
                     assertThat(competencia.getNivelMinimo()).isEqualTo(NivelCompetencia.BASICO);
                     assertThat(competencia.getMesesExperienciaMinima()).isEqualTo(6);
                 });
-        assertThat(vagaSalva.getOrganizacao().getId()).isEqualTo(organizacao.getId());
-        assertThat(vagaSalva.getResponsavel().getOrganizacao().getId()).isEqualTo(organizacao.getId());
+        assertThat(vagaSalva.getResponsavel().getId()).isEqualTo(responsavel.getId());
     }
 
     @Test
-    void deveImpedirNoBancoResponsavelDeOutraOrganizacao() {
-        Competencia java = new Competencia("Java para organizações", null);
-        Organizacao empresaA = new Organizacao("Empresa A - persistência");
-        Organizacao empresaB = new Organizacao("Empresa B - persistência");
-        entityManager.persist(java);
-        entityManager.persist(empresaA);
-        entityManager.persist(empresaB);
-
-        Usuario responsavelB = new Usuario(
-                "Responsável B",
-                "responsavel.b.persistencia@empresa.com",
+    void devePersistirUsuarioRecemCadastradoSemCompetencias() {
+        Usuario candidato = new Usuario(
+                "Novo candidato",
+                "novo.candidato@empresa.com",
                 "senha-hash",
-                PerfilUsuario.RESPONSAVEL,
-                LocalDate.of(2019, 1, 1),
-                empresaB,
-                List.of(new UsuarioCompetencia(java, NivelCompetencia.AVANCADO, 60))
+                PerfilUsuario.CANDIDATO,
+                LocalDate.of(2024, 1, 8),
+                List.of()
         );
-        entityManager.persist(responsavelB);
+        entityManager.persist(candidato);
         entityManager.flush();
+        entityManager.clear();
 
-        assertThatThrownBy(() -> entityManager.createNativeQuery("""
-                        INSERT INTO vagas (
-                            titulo,
-                            descricao,
-                            status,
-                            responsavel_id,
-                            organizacao_id
-                        ) VALUES (
-                            'Vaga inválida',
-                            'Responsável de outra organização',
-                            'RASCUNHO',
-                            :responsavelId,
-                            :organizacaoId
-                        )
-                        """)
-                .setParameter("responsavelId", responsavelB.getId())
-                .setParameter("organizacaoId", empresaA.getId())
-                .executeUpdate())
-                .isInstanceOf(PersistenceException.class);
+        Usuario salvo = entityManager.find(Usuario.class, candidato.getId());
+        assertThat(salvo.getCompetencias()).isEmpty();
     }
 }
