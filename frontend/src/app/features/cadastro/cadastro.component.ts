@@ -68,7 +68,7 @@ export class CadastroComponent {
       finalize(() => this.enviando.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: () => void this.router.navigateByUrl(this.session.rotaInicial()),
+      next: () => void this.router.navigateByUrl('/vagas'),
       error: (error: unknown) => {
         this.erro.set(mensagemDaApi(error, 'Não foi possível criar sua conta. Tente novamente.'));
       },

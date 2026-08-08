@@ -43,7 +43,7 @@ export class LoginComponent {
     ).subscribe({
       next: () => {
         const retorno = this.route.snapshot.queryParamMap.get('retorno');
-        void this.router.navigateByUrl(retorno?.startsWith('/') ? retorno : this.session.rotaInicial());
+        void this.router.navigateByUrl(retorno?.startsWith('/') ? retorno : '/vagas');
       },
       error: (error: unknown) => {
         this.erro.set(mensagemDaApi(error, 'Não foi possível entrar. Tente novamente.'));

@@ -1,39 +1,10 @@
 <header class="topbar">
-  <a class="brand" routerLink="/vagas">Empresa X</a>
-  <nav aria-label="Navegação principal">
-    <a routerLink="/vagas">Vagas</a>
-    @if (session.possuiPerfil('ADMIN', 'RESPONSAVEL')) {
-      <a routerLink="/gestao/vagas">Gestão</a>
-    }
-    @if (session.possuiPerfil('ADMIN')) {
-      <a routerLink="/administracao/usuarios">Usuários</a>
-    }
-  </nav>
+  <strong>Empresa X</strong>
   <button type="button" (click)="sair()">Sair</button>
 </header>
 
 <main>
-  <p class="eyebrow">Olá, {{ session.usuario()?.nome }}</p>
-  <h1>Oportunidades para continuar crescendo.</h1>
-  <p class="lead">
-    Sua sessão está pronta. A listagem de vagas será conectada na próxima entrega vertical.
-  </p>
-
-  <section class="cards" aria-label="Resumo da plataforma">
-    <article>
-      <span>01</span>
-      <h2>Explore vagas</h2>
-      <p>Encontre posições abertas alinhadas ao seu momento profissional.</p>
-    </article>
-    <article>
-      <span>02</span>
-      <h2>Complete o perfil</h2>
-      <p>Registre competências e experiências antes de enviar uma candidatura.</p>
-    </article>
-    <article>
-      <span>03</span>
-      <h2>Acompanhe</h2>
-      <p>Consulte o andamento de cada processo em um único lugar.</p>
-    </article>
-  </section>
+  <p>Olá, {{ session.usuario()?.nome }}.</p>
+  <h1>Sessão iniciada</h1>
+  <p>A área de vagas será implementada em uma próxima entrega.</p>
 </main>

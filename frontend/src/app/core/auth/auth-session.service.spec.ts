@@ -9,7 +9,7 @@ describe('AuthSessionService', () => {
     TestBed.configureTestingModule({ providers: [AuthSessionService, TokenStorageService] });
   });
 
-  it('mantém token no sessionStorage e calcula a rota pelo perfil', () => {
+  it('mantém token no sessionStorage', () => {
     const session = TestBed.inject(AuthSessionService);
 
     session.iniciar({
@@ -26,7 +26,6 @@ describe('AuthSessionService', () => {
 
     expect(sessionStorage.getItem('recruiter-platform.token')).toBe('jwt-teste');
     expect(session.autenticado()).toBe(true);
-    expect(session.rotaInicial()).toBe('/administracao/usuarios');
   });
 
   it('limpa completamente a sessão no logout', () => {

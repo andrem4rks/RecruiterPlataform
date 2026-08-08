@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, roleGuard } from './core/auth/auth.guard';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -18,18 +18,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/home/home.component').then((module) => module.HomeComponent),
     title: 'Vagas internas',
-  },
-  {
-    path: 'gestao/vagas',
-    canActivate: [authGuard, roleGuard('ADMIN', 'RESPONSAVEL')],
-    loadComponent: () => import('./features/home/home.component').then((module) => module.HomeComponent),
-    title: 'Gestão de vagas',
-  },
-  {
-    path: 'administracao/usuarios',
-    canActivate: [authGuard, roleGuard('ADMIN')],
-    loadComponent: () => import('./features/home/home.component').then((module) => module.HomeComponent),
-    title: 'Administração',
   },
   { path: '', pathMatch: 'full', redirectTo: 'vagas' },
   { path: '**', redirectTo: 'vagas' },

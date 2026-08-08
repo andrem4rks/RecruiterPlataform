@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { LoginResponse, PerfilUsuario, Usuario } from './auth.models';
+import { LoginResponse, Usuario } from './auth.models';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -28,19 +28,4 @@ export class AuthSessionService {
     this.usuarioState.set(null);
   }
 
-  possuiPerfil(...perfis: PerfilUsuario[]): boolean {
-    const usuario = this.usuarioState();
-    return usuario !== null && perfis.includes(usuario.perfil);
-  }
-
-  rotaInicial(): string {
-    const perfil = this.usuarioState()?.perfil;
-    if (perfil === 'ADMIN') {
-      return '/administracao/usuarios';
-    }
-    if (perfil === 'RESPONSAVEL') {
-      return '/gestao/vagas';
-    }
-    return '/vagas';
-  }
 }
