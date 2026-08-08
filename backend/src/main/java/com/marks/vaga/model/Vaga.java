@@ -1,6 +1,5 @@
 package com.marks.vaga.model;
 
-import com.marks.organizacao.model.Organizacao;
 import com.marks.usuario.model.PerfilUsuario;
 import com.marks.usuario.model.Usuario;
 import jakarta.persistence.Column;
@@ -57,11 +56,6 @@ public class Vaga {
     @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "responsavel_id", nullable = false)
     private Usuario responsavel;
-
-    @NotNull
-    @ManyToOne(fetch = LAZY, optional = false)
-    @JoinColumn(name = "organizacao_id", nullable = false, updatable = false)
-    private Organizacao organizacao;
 
     @OneToMany(cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "vaga_id", nullable = false)
@@ -138,20 +132,12 @@ public class Vaga {
 
     public void setResponsavel(Usuario responsavel) {
         validarResponsavel(responsavel);
-        if (!mesmaOrganizacao(organizacao, responsavel.getOrganizacao())) {
-            throw new IllegalArgumentException("O responsável deve pertencer à organização da vaga");
-        }
         this.responsavel = responsavel;
-    }
-
-    public Organizacao getOrganizacao() {
-        return organizacao;
     }
 
     private void definirResponsavelInicial(Usuario responsavel) {
         validarResponsavel(responsavel);
         this.responsavel = responsavel;
-        this.organizacao = responsavel.getOrganizacao();
     }
 
     private void validarResponsavel(Usuario responsavel) {
@@ -160,19 +146,6 @@ public class Vaga {
                 && responsavel.getPerfil() != PerfilUsuario.RESPONSAVEL) {
             throw new IllegalArgumentException("O responsável deve possuir perfil ADMIN ou RESPONSAVEL");
         }
-        if (responsavel.getOrganizacao() == null) {
-            throw new IllegalArgumentException("O responsável deve pertencer a uma organização");
-        }
-    }
-
-    private boolean mesmaOrganizacao(Organizacao primeira, Organizacao segunda) {
-        if (primeira == segunda) {
-            return true;
-        }
-
-        Long primeiroId = primeira == null ? null : primeira.getId();
-        Long segundoId = segunda == null ? null : segunda.getId();
-        return primeiroId != null && primeiroId.equals(segundoId);
     }
 
     public List<RequisitoVaga> getRequisitos() {

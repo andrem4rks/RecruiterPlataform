@@ -2,7 +2,6 @@ package com.marks.backend;
 
 import com.marks.competencia.model.Competencia;
 import com.marks.competencia.model.NivelCompetencia;
-import com.marks.organizacao.model.Organizacao;
 import com.marks.usuario.model.PerfilUsuario;
 import com.marks.usuario.model.Usuario;
 import com.marks.usuario.model.UsuarioCompetencia;
@@ -27,7 +26,7 @@ class CompetenciasDominioTests {
     }
 
     @Test
-    void deveExigirCompetenciaAoCriarUsuarioEVaga() {
+    void devePermitirCadastroSemCompetenciaMasExigirCompetenciaNaVaga() {
         Competencia java = new Competencia("Java", null);
         UsuarioCompetencia experienciaJava = new UsuarioCompetencia(
                 java,
@@ -35,9 +34,7 @@ class CompetenciasDominioTests {
                 24
         );
 
-        assertThatThrownBy(() -> novoUsuario(List.of()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("ao menos uma competência");
+        assertThat(novoUsuario(List.of()).getCompetencias()).isEmpty();
 
         Usuario responsavel = novoUsuario(List.of(experienciaJava));
         assertThatThrownBy(() -> new Vaga(
@@ -97,7 +94,6 @@ class CompetenciasDominioTests {
                 "senha-hash",
                 PerfilUsuario.RESPONSAVEL,
                 LocalDate.of(2020, 1, 1),
-                new Organizacao("Empresa teste"),
                 competencias
         );
     }

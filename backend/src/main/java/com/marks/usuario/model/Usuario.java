@@ -1,16 +1,13 @@
 package com.marks.usuario.model;
 
-import com.marks.organizacao.model.Organizacao;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -66,12 +63,6 @@ public class Usuario {
     @Column(nullable = false)
     private boolean ativo = true;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "organizacao_id", nullable = false)
-    private Organizacao organizacao;
-
-    @Size(min = 1, message = "O usuário deve possuir ao menos uma competência")
     @OneToMany(cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id", nullable = false)
     private List<UsuarioCompetencia> competencias = new ArrayList<>();
@@ -93,7 +84,6 @@ public class Usuario {
             String senhaHash,
             PerfilUsuario perfil,
             LocalDate dataAdmissao,
-            Organizacao organizacao,
             Collection<UsuarioCompetencia> competencias
     ) {
         this.nome = nome;
@@ -101,16 +91,9 @@ public class Usuario {
         this.senhaHash = senhaHash;
         this.perfil = perfil;
         this.dataAdmissao = dataAdmissao;
-        this.organizacao = Objects.requireNonNull(organizacao, "A organização do usuário é obrigatória");
-
-        if (!organizacao.isAtiva()) {
-            throw new IllegalArgumentException("A organização do usuário deve estar ativa");
+        if (competencias != null) {
+            competencias.forEach(this::adicionarCompetencia);
         }
-
-        if (competencias == null || competencias.isEmpty()) {
-            throw new IllegalArgumentException("O usuário deve possuir ao menos uma competência");
-        }
-        competencias.forEach(this::adicionarCompetencia);
     }
 
     public Long getId() {
@@ -163,10 +146,6 @@ public class Usuario {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
-    }
-
-    public Organizacao getOrganizacao() {
-        return organizacao;
     }
 
     public List<UsuarioCompetencia> getCompetencias() {
